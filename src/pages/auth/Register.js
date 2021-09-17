@@ -34,11 +34,13 @@ const Register = () => {
         type="email"
         className="form-control"
         value={email}
-        placeholder="Email"
+        placeholder="Your email"
         onChange={onEmailChange}
         autoFocus
       />
-      <button type="submit" className="btn btn-light mt-3">
+
+      <br />
+      <button type="submit" className="btn btn-light">
         REGISTER
       </button>
     </form>

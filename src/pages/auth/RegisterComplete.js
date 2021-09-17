@@ -59,7 +59,8 @@ const RegisterComplete = ({ history }) => {
         placeholder="Password"
         onChange={onPasswordChange}
       />
-      <button type="submit" className="btn btn-light mt-3">
+      <br />
+      <button type="submit" className="btn btn-light">
         COMPLETE REGISTRATION
       </button>
     </form>
