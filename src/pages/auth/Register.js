@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { auth } from "../../firebase";
 
 const Register = () => {
@@ -10,7 +9,7 @@ const Register = () => {
     e.preventDefault();
     const config = {
       // URL you want to redirect back to
-      url: "http://localhost:3000/register/complete",
+      url: process.env.REACT_APP_REGISTER_REDIRECT_URL || "",
       handleCodeInApp: true,
     };
 
@@ -35,10 +34,11 @@ const Register = () => {
         type="email"
         className="form-control"
         value={email}
+        placeholder="Email"
         onChange={onEmailChange}
         autoFocus
       />
-      <button type="submit" className="btn btn-light">
+      <button type="submit" className="btn btn-light mt-3">
         REGISTER
       </button>
     </form>
@@ -49,7 +49,6 @@ const Register = () => {
       <div className="row">
         <div className="col-md-6 offset-md-3">
           <h4>Register</h4>
-          <ToastContainer />
           {registerForm}
         </div>
       </div>
