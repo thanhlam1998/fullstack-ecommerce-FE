@@ -8,7 +8,7 @@ const History = () => {
         <div className="col-md-2">
           <UserNav />
         </div>
-        <div className="col">User history page</div>
+        <div className="col">User wishlist page</div>
       </div>
     </div>
   );
