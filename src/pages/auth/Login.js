@@ -45,7 +45,7 @@ const Login = ({ history }) => {
             },
           });
         })
-        .catch();
+        .catch((err) => console.log(err));
       history.push("/");
     } catch (error) {
       toast.error(error.message);
@@ -81,7 +81,9 @@ const Login = ({ history }) => {
               },
             });
           })
-          .catch();
+          .catch((err) => console.log(err));
+
+        // Redirect
         history.push("/");
       })
       .catch((err) => {

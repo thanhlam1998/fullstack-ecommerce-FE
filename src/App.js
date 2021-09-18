@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { actionTypes } from "./actions/types";
 import { auth } from "./firebase";
+import { currentUser } from "./functions/auth";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -20,13 +21,21 @@ const App = () => {
     const unsubscibe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
-        dispatch({
-          type: actionTypes.LOGGED_IN_USER,
-          payload: {
-            email: user.email,
-            token: idTokenResult.token,
-          },
-        });
+        currentUser(idTokenResult.token)
+          .then((res) => {
+            const { name, email, role, _id } = res.data;
+            dispatch({
+              type: actionTypes.LOGGED_IN_USER,
+              payload: {
+                name,
+                email,
+                token: idTokenResult.token,
+                role,
+                _id,
+              },
+            });
+          })
+          .catch((err) => console.log(err));
       }
     });
     // cleanup
