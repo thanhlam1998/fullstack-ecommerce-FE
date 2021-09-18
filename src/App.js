@@ -11,7 +11,9 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import RegisterComplete from "./pages/auth/RegisterComplete";
 import Header from "./pages/components/nav/Header";
+import UserRoute from "./pages/components/routes/UserRoute";
 import Home from "./pages/Home";
+import History from "./pages/user/History";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -54,6 +56,7 @@ const App = () => {
         <Route exact path="/register" component={Register} />
         <Route exact path="/register/complete" component={RegisterComplete} />
         <Route exact path="/forgot/password" component={ForgotPassword} />
+        <UserRoute exact path="/user/history" component={History} />
       </Switch>
     </>
   );
