@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { actionTypes } from "../../actions/types";
 import { auth, googleAuthProvider } from "../../firebase";
+import { createOrUpdateUser } from "../../functions/auth";
 
 const Login = ({ history }) => {
   const [email, setEmail] = useState("");
@@ -29,13 +30,22 @@ const Login = ({ history }) => {
       const result = await auth.signInWithEmailAndPassword(email, password);
       const { user } = result;
       const idTokenResult = await user?.getIdTokenResult();
-      dispatch({
-        type: actionTypes.LOGGED_IN_USER,
-        payload: {
-          email: user?.email,
-          token: idTokenResult?.token,
-        },
-      });
+
+      createOrUpdateUser(idTokenResult.token)
+        .then((res) => {
+          const { name, email, role, _id } = res.data;
+          dispatch({
+            type: actionTypes.LOGGED_IN_USER,
+            payload: {
+              name,
+              email,
+              token: idTokenResult.token,
+              role,
+              _id,
+            },
+          });
+        })
+        .catch();
       history.push("/");
     } catch (error) {
       toast.error(error.message);
@@ -57,13 +67,21 @@ const Login = ({ history }) => {
       .then(async (result) => {
         const { user } = result;
         const idTokenResult = await user?.getIdTokenResult();
-        dispatch({
-          type: actionTypes.LOGGED_IN_USER,
-          payload: {
-            email: user?.email,
-            token: idTokenResult?.token,
-          },
-        });
+        createOrUpdateUser(idTokenResult.token)
+          .then((res) => {
+            const { name, email, role, _id } = res.data;
+            dispatch({
+              type: actionTypes.LOGGED_IN_USER,
+              payload: {
+                name,
+                email,
+                token: idTokenResult.token,
+                role,
+                _id,
+              },
+            });
+          })
+          .catch();
         history.push("/");
       })
       .catch((err) => {

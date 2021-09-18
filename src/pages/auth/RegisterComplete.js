@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { actionTypes } from "../../actions/types";
 import { auth } from "../../firebase";
+import { createOrUpdateUser } from "../../functions/auth";
 
 const RegisterComplete = ({ history }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setEmail(window.localStorage.getItem("emailForRegistration") || "");
@@ -36,7 +40,21 @@ const RegisterComplete = ({ history }) => {
         await user?.updatePassword(password);
         const idTokenResult = await user?.getIdTokenResult();
         // Redux store
-        console.log("User: ", user, "idTokenResult: ", idTokenResult);
+        createOrUpdateUser(idTokenResult.token)
+          .then((res) => {
+            const { name, email, role, _id } = res.data;
+            dispatch({
+              type: actionTypes.LOGGED_IN_USER,
+              payload: {
+                name,
+                email,
+                token: idTokenResult.token,
+                role,
+                _id,
+              },
+            });
+          })
+          .catch();
         // redirect
         history.push("/");
       }
@@ -51,7 +69,12 @@ const RegisterComplete = ({ history }) => {
 
   const completeRegistrationForm = (
     <form onSubmit={handleSubmit}>
-      <input type="email" className="form-control" value={email} disabled />
+      <input
+        type="email"
+        className="form-control mb-3"
+        value={email}
+        disabled
+      />
       <input
         type="password"
         className="form-control"
