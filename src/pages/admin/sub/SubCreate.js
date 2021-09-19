@@ -1,28 +1,28 @@
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  createCategory,
-  getCategories,
-  removeCategory,
-} from "../../../functions/category";
-import AdminNav from "../../components/nav/AdminNav";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { getCategories } from "../../../functions/category";
+import { createSub, getSubs, removeSub } from "../../../functions/sub";
 import CategoryForm from "../../components/forms/CategoryForm";
 import LocalSearch from "../../components/forms/LocalSearch";
+import AdminNav from "../../components/nav/AdminNav";
 
-const CategoryCreate = () => {
+const SubCreate = () => {
   const { user } = useSelector((state) => ({ ...state }));
 
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
+  const [subs, setSubs] = useState([]);
 
   const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     loadCategories();
+    loadSubs();
   }, []);
 
   const loadCategories = () => {
@@ -31,15 +31,21 @@ const CategoryCreate = () => {
     });
   };
 
+  const loadSubs = () => {
+    getSubs().then((res) => {
+      setSubs(res.data);
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    createCategory({ name }, user.token)
+    createSub({ name, parent: category }, user.token)
       .then((res) => {
         setLoading(false);
         setName("");
         toast.success(`${res.data.name} is created`);
-        loadCategories();
+        loadSubs();
       })
       .catch((err) => {
         setLoading(false);
@@ -50,11 +56,11 @@ const CategoryCreate = () => {
   const handleRemove = async (slug) => {
     if (window.confirm("Delete?")) {
       setLoading(true);
-      removeCategory(slug, user.token)
+      removeSub(slug, user.token)
         .then((res) => {
           setLoading(false);
           toast.error(`${res.data.name} deleted`);
-          loadCategories();
+          loadSubs();
         })
         .catch((err) => {
           if (err.response.status === 400) {
@@ -69,6 +75,10 @@ const CategoryCreate = () => {
     return c.name.toLowerCase().includes(keyword);
   };
 
+  const onCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -79,8 +89,24 @@ const CategoryCreate = () => {
           {loading ? (
             <h4 className="text-danger">Loading...</h4>
           ) : (
-            <h4>Create category</h4>
+            <h4>Create sub category</h4>
           )}
+          <div className="form-group mb-3">
+            <label>Parent category</label>
+            <select
+              name="category"
+              className="form-select"
+              onChange={onCategoryChange}>
+              <option>Please select</option>
+              {categories.length > 0 &&
+                categories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
           <CategoryForm
             handleSubmit={handleSubmit}
             name={name}
@@ -91,15 +117,15 @@ const CategoryCreate = () => {
           <LocalSearch keyword={keyword} setKeyword={setKeyword} />
           <hr />
 
-          {categories.filter(searched(keyword)).map((c) => (
-            <div className="alert alert-info" key={c._id}>
-              {c.name}{" "}
+          {subs.filter(searched(keyword)).map((s) => (
+            <div className="alert alert-info" key={s._id}>
+              {s.name}{" "}
               <span
-                onClick={(e) => handleRemove(c.slug)}
+                onClick={(e) => handleRemove(s.slug)}
                 className="btn btn-light btn-sm float-end ms-2">
                 <DeleteOutlined className="text-danger" />
               </span>
-              <Link to={`/admin/category/${c.slug}`}>
+              <Link to={`/admin/sub/${s.slug}`}>
                 <span className="btn btn-light btn-sm float-end">
                   <EditOutlined className="text-dark" />
                 </span>
@@ -112,4 +138,4 @@ const CategoryCreate = () => {
   );
 };
 
-export default CategoryCreate;
+export default SubCreate;
