@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getCategories, getCategorySubs } from "../../../functions/category";
 import { createProduct } from "../../../functions/product";
+import FileUpload from "../../components/forms/FileUpload";
 import ProductCreateForm from "../../components/forms/ProductCreateForm";
 import AdminNav from "../../components/nav/AdminNav";
 
@@ -26,6 +27,7 @@ const ProductCreate = () => {
   const [values, setValues] = useState(initialState);
   const [subOptions, setSubOptions] = useState([]);
   const [showSub, setShowSub] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // redux
   const { user } = useSelector((state) => ({ ...state }));
@@ -76,6 +78,17 @@ const ProductCreate = () => {
         <div className="col-md-10">
           <h4>Product create</h4>
           <hr />
+
+          {JSON.stringify(values.images)}
+
+          <div className="mb-3">
+            <FileUpload
+              values={values}
+              setValues={setValues}
+              setLoading={setLoading}
+            />
+          </div>
+
           <ProductCreateForm
             handleSubmit={handleSubmit}
             handleChange={handleChange}
