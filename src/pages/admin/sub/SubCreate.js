@@ -91,7 +91,7 @@ const SubCreate = () => {
           ) : (
             <h4>Create sub category</h4>
           )}
-          <div className="form-group mb-3">
+          <div className="form-group">
             <label>Parent category</label>
             <select
               name="category"
@@ -112,8 +112,6 @@ const SubCreate = () => {
             name={name}
             setName={setName}
           />
-
-          <br />
           <LocalSearch keyword={keyword} setKeyword={setKeyword} />
           <hr />
 

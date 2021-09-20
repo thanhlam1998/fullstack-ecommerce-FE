@@ -38,6 +38,7 @@ const History = () => {
           value={password}
           placeholder="Enter new password"
         />
+        <br />
         <button className="btn btn-primary" disabled={!password || loading}>
           Submit
         </button>

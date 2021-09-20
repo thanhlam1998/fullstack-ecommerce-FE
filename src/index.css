@@ -1,3 +1,7 @@
 svg {
   vertical-align: baseline;
 }
+
+.form-group {
+  margin-bottom: 1rem;
+}
