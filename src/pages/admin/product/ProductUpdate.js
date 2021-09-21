@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { getCategories, getCategorySubs } from "../../../functions/category";
-import { createProduct } from "../../../functions/product";
+import { getProduct } from "../../../functions/product";
 import FileUpload from "../../components/forms/FileUpload";
-import ProductCreateForm from "../../components/forms/ProductCreateForm";
+import ProductUpdateForm from "../../components/forms/ProductUpdateForm";
 import AdminNav from "../../components/nav/AdminNav";
 import { LoadingOutlined } from "@ant-design/icons";
 
@@ -24,17 +23,22 @@ const initialState = {
   brand: "",
 };
 
-const ProductCreate = () => {
+const ProductUpdate = ({ match }) => {
+  // State
   const [values, setValues] = useState(initialState);
   const [subOptions, setSubOptions] = useState([]);
-  const [showSub, setShowSub] = useState(false);
+  const [arrayOfSubs, setArrayOfSubs] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // redux
   const { user } = useSelector((state) => ({ ...state }));
+
+  // Router
+  const { slug } = match.params;
 
   useEffect(() => {
     loadCategories();
+    loadProduct();
   }, []);
 
   const loadCategories = () => {
@@ -43,18 +47,26 @@ const ProductCreate = () => {
     });
   };
 
+  const loadProduct = () => {
+    getProduct(slug).then((p) => {
+      // Load single product
+      setValues((prev) => ({ ...prev, ...p.data }));
+      // Load single product category subs
+      getCategorySubs(p.data.category._id).then((res) => {
+        setSubOptions(res.data); // on first load
+      });
+      // Prepare array of sub ids to show as default sub value in select
+      const arr = [];
+      p.data.subs.map((s) => {
+        arr.push(s._id);
+      });
+      setArrayOfSubs((prev) => arr);
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    createProduct(values, user.token)
-      .then((res) => {
-        // toast.success(`${res.data.title} is created`);
-        window.alert(`${res.data.title} is created`);
-        window.location.reload();
-      })
-      .catch((err) => {
-        // if (err.response.status === 400) toast.error(err.response.data);
-        toast.error(err.response.data?.err);
-      });
+    //
   };
 
   const handleChange = (e) => {
@@ -63,11 +75,23 @@ const ProductCreate = () => {
 
   const handleCategoryChange = (e) => {
     e.preventDefault();
-    setValues({ ...values, subs: [], category: e.target.value });
+    setValues({ ...values, subs: [] });
+
+    setSelectedCategory(e.target.value);
+
     getCategorySubs(e.target.value).then((res) => {
       setSubOptions(res.data);
     });
-    setShowSub(true);
+
+    // If user clicks back to the original category
+    // show its sub categories default
+    console.log(values.category._id, e.target.value);
+
+    if (values.category._id === e.target.value) {
+      loadProduct();
+    }
+
+    setArrayOfSubs([]);
   };
 
   return (
@@ -76,14 +100,15 @@ const ProductCreate = () => {
         <div className="col-md-2">
           <AdminNav />
         </div>
+
         <div className="col-md-10">
-          <br />
           {loading ? (
             <LoadingOutlined className="text-danger h3" />
           ) : (
-            <h4>Product create</h4>
+            <h4>Product update</h4>
           )}
           <hr />
+
           <div className="pt-3 pb-3">
             <FileUpload
               values={values}
@@ -92,14 +117,16 @@ const ProductCreate = () => {
             />
           </div>
 
-          <ProductCreateForm
+          <ProductUpdateForm
             handleSubmit={handleSubmit}
             handleChange={handleChange}
             setValues={setValues}
             values={values}
             handleCategoryChange={handleCategoryChange}
             subOptions={subOptions}
-            showSub={showSub}
+            arrayOfSubs={arrayOfSubs}
+            setArrayOfSubs={setArrayOfSubs}
+            selectedCategory={selectedCategory}
           />
         </div>
       </div>
@@ -107,4 +134,4 @@ const ProductCreate = () => {
   );
 };
 
-export default ProductCreate;
+export default ProductUpdate;
