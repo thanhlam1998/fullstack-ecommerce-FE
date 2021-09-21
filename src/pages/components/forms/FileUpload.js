@@ -1,3 +1,4 @@
+import { Avatar, Badge } from "antd";
 import axios from "axios";
 import React from "react";
 import Resizer from "react-image-file-resizer";
@@ -55,18 +56,61 @@ const FileUpload = ({ values, setValues, setLoading }) => {
     // set url to images[] in the parent component - ProductCreate
   };
 
+  const handleImageRemove = (public_id) => {
+    setLoading(true);
+    axios
+      .post(
+        `${process.env.REACT_APP_API}/removeImage`,
+        { public_id },
+        {
+          headers: {
+            authtoken: user ? user.token : "",
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        const { images } = values;
+        const filteredImages = images.filter((item) => {
+          return item.public_id !== public_id;
+        });
+        setValues({ ...values, images: filteredImages });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
   return (
     <div>
-      <label className="btn btn-primary">
-        Choose file
-        <input
-          type="file"
-          multiple
-          hidden
-          accept="images/*"
-          onChange={fileUploadAndResize}
-        />
-      </label>
+      {values.images &&
+        values.images.map((image) => (
+          <Badge
+            count="X"
+            key={image.public_id}
+            onClick={() => handleImageRemove(image.public_id)}>
+            <Avatar
+              key={image.public_id}
+              src={image.url}
+              size={100}
+              shape="square"
+              className="ms-3"
+            />
+          </Badge>
+        ))}
+      <div className={values.images.length > 0 ? "mt-3" : ""}>
+        <label className="btn btn-primary">
+          Choose file
+          <input
+            type="file"
+            multiple
+            hidden
+            accept="images/*"
+            onChange={fileUploadAndResize}
+          />
+        </label>
+      </div>
     </div>
   );
 };

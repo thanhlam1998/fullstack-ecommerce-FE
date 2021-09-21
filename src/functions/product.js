@@ -7,3 +7,7 @@ export const createProduct = async (product, authtoken) => {
     },
   });
 };
+
+export const getProductByCount = async (count) => {
+  return await axios.get(`${process.env.REACT_APP_API}/products/${count}`);
+};
