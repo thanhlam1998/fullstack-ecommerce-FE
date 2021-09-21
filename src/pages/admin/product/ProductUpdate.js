@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getCategories, getCategorySubs } from "../../../functions/category";
-import { getProduct } from "../../../functions/product";
+import { getProduct, updateProduct } from "../../../functions/product";
 import FileUpload from "../../components/forms/FileUpload";
 import ProductUpdateForm from "../../components/forms/ProductUpdateForm";
 import AdminNav from "../../components/nav/AdminNav";
 import { LoadingOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 const initialState = {
   title: "",
@@ -23,7 +24,7 @@ const initialState = {
   brand: "",
 };
 
-const ProductUpdate = ({ match }) => {
+const ProductUpdate = ({ match, history }) => {
   // State
   const [values, setValues] = useState(initialState);
   const [subOptions, setSubOptions] = useState([]);
@@ -66,7 +67,23 @@ const ProductUpdate = ({ match }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //
+    setLoading(true);
+
+    values.subs = arrayOfSubs;
+    values.category = selectedCategory
+      ? selectedCategory
+      : values.category?._id;
+
+    updateProduct(slug, values, user.token)
+      .then((res) => {
+        setLoading(false);
+        toast.success(`${res.data.title} is updated `);
+        history.push("/admin/products");
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err.response.data.err);
+      });
   };
 
   const handleChange = (e) => {
@@ -85,8 +102,6 @@ const ProductUpdate = ({ match }) => {
 
     // If user clicks back to the original category
     // show its sub categories default
-    console.log(values.category._id, e.target.value);
-
     if (values.category._id === e.target.value) {
       loadProduct();
     }
