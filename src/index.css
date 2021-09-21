@@ -11,3 +11,9 @@ svg {
   margin-bottom: 2rem;
   background-color: #e9ecef;
 }
+
+.slider img,
+.card-image {
+  height: 450px;
+  object-fit: cover;
+}

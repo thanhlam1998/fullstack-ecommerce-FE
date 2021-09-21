@@ -27,7 +27,7 @@ const ProductCard = ({ product }) => {
         </Link>,
         <>
           <ShoppingCartOutlined className="text-success" />
-          <br /> View Product
+          <br /> Add to Cart
         </>,
       ]}>
       <Meta
