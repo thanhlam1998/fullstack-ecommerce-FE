@@ -9,7 +9,6 @@ const CategoryList = () => {
   useEffect(() => {
     setLoading(true);
     getCategories().then((res) => {
-      console.log(res.data);
       setCategories(res.data);
       setLoading(false);
     });
@@ -17,13 +16,12 @@ const CategoryList = () => {
 
   const showCategories = () => {
     return categories.map((c) => (
-      <div
+      <Link
+        className=" col btn btn-dark btn-lg btn-block btn-raise m-3 fw-bold"
         key={c._id}
-        className=" col btn btn-dark btn-lg btn-block btn-raise m-3 fw-bold">
-        <Link className="text-light" to={`/category/${c.slug}`}>
-          {c.name}
-        </Link>
-      </div>
+        to={`/category/${c.slug}`}>
+        {c.name}
+      </Link>
     ));
   };
 
