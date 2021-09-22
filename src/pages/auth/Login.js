@@ -18,16 +18,28 @@ const Login = ({ history }) => {
   const { user } = useSelector((state) => ({ ...state }));
 
   const roleBaseRedirect = (res) => {
-    if (res.data.role === "admin") {
-      history.push("/admin/dashboard");
+    // Check if intended
+    const intended = history.location.state;
+
+    if (intended && intended.from) {
+      history.push(intended.from);
     } else {
-      history.push("/user/history");
+      if (res.data.role === "admin") {
+        history.push("/admin/dashboard");
+      } else {
+        history.push("/user/history");
+      }
     }
   };
 
   useEffect(() => {
-    if (user && user.token) {
-      history.push("/");
+    const intended = history.location.state;
+    if (intended && intended.from) {
+      return;
+    } else {
+      if (user && user.token) {
+        history.push("/");
+      }
     }
   }, [user, history]);
 

@@ -28,6 +28,7 @@ const ProductListItem = ({ product }) => {
           <div>
             {subs.map((s) => (
               <Link
+                key={s._id}
                 to={`/subs/${s.slug}`}
                 className="label ms-2 label-default label-pill ">
                 {s.name}
