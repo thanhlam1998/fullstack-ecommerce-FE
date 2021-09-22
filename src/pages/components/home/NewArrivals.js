@@ -48,14 +48,16 @@ const NewArrivals = () => {
           </div>
         )}
       </div>
-      <div className="row">
-        <nav className="col-md-4 offset-md-4 text-center pt-5 p-3">
-          <Pagination
-            current={page}
-            total={(productsCount / 3) * 10}
-            onChange={onPageChange}
-          />
-        </nav>
+      <div className="container-fluid">
+        <div className="row">
+          <nav className="col-md-4 offset-md-4 text-center pt-5 p-3">
+            <Pagination
+              current={page}
+              total={(productsCount / 3) * 10}
+              onChange={onPageChange}
+            />
+          </nav>
+        </div>
       </div>
     </>
   );

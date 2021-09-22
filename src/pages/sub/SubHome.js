@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getCategory } from "../../functions/category";
+import { getSub } from "../../functions/sub";
 import ProductCard from "../components/cards/ProductCard";
 
-const CategoryHome = ({ match }) => {
-  const [category, setCategory] = useState([]);
+const SubHome = ({ match }) => {
+  const [sub, setSub] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -11,9 +11,9 @@ const CategoryHome = ({ match }) => {
 
   useEffect(() => {
     setLoading(true);
-    getCategory(slug).then((c) => {
-      setCategory(c.data.category);
-      setProducts(c.data.products);
+    getSub(slug).then((s) => {
+      setSub(s.data.sub);
+      setProducts(s.data.products);
       setLoading(false);
     });
   }, [slug]);
@@ -27,7 +27,7 @@ const CategoryHome = ({ match }) => {
               ? "Loading..."
               : `${products.length} ${
                   products.length > 1 ? "products" : "product"
-                } in "${category?.name}" category`}
+                } in "${sub?.name}" sub category`}
           </h2>
         </div>
       </div>
@@ -43,4 +43,4 @@ const CategoryHome = ({ match }) => {
   );
 };
 
-export default CategoryHome;
+export default SubHome;
