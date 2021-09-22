@@ -1,25 +1,25 @@
-import {
-  HeartOutlined,
-  ShoppingCartOutlined,
-  StarOutlined,
-} from "@ant-design/icons";
+import { HeartOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Card, Tabs } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { Link } from "react-router-dom";
-import laptop from "../../../images/laptop.png";
-import ProductListItem from "./ProductListItem";
 import StarRatings from "react-star-ratings";
+import laptop from "../../../images/laptop.png";
 import RatingModal from "../modal/RatingModal";
+import ProductListItem from "./ProductListItem";
 
 const { TabPane } = Tabs;
 
-const SingleProduct = ({ product }) => {
+const SingleProduct = ({ product, onStarClick, star, handleRate }) => {
   const { title, images, description, _id } = product;
 
-  const changeRating = (newRating, name) => {
-    console.log("newRating", newRating, "name", name);
+  const handleRateWrapper = () => {
+    handleRate(_id);
   };
+
+  useEffect(() => {
+    console.log("Star", star);
+  }, [star]);
 
   return (
     <div className="row">
@@ -57,12 +57,12 @@ const SingleProduct = ({ product }) => {
             <Link to="/">
               <HeartOutlined className="text-danger" /> <br /> Add to Wishlist
             </Link>,
-            <RatingModal>
+            <RatingModal handleRate={handleRateWrapper}>
               <StarRatings
-                rating={2}
-                numberOfStars={5}
-                changeRating={changeRating}
                 name={_id}
+                numberOfStars={5}
+                rating={star}
+                changeRating={onStarClick}
                 isSelectable={true}
                 starRatedColor="red"
               />
