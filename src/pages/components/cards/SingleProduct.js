@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import { Link } from "react-router-dom";
 import StarRatings from "react-star-ratings";
+import { showAverage } from "../../../functions/rating";
 import laptop from "../../../images/laptop.png";
 import RatingModal from "../modal/RatingModal";
 import ProductListItem from "./ProductListItem";
@@ -48,6 +49,11 @@ const SingleProduct = ({ product, onStarClick, star, handleRate }) => {
 
       <div className="col-md-5">
         <h2 className="bg-info p-3">{title}</h2>
+        {product && product.ratings && product.ratings.length > 0 ? (
+          showAverage(product)
+        ) : (
+          <div className="text-center pt-1 pb-3">No rating yet</div>
+        )}
         <Card
           actions={[
             <>
