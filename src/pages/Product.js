@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { getProduct, productStar } from "../functions/product";
+import { getProduct, getRelated, productStar } from "../functions/product";
+import ProductCard from "./components/cards/ProductCard";
 import SingleProduct from "./components/cards/SingleProduct";
 
 const Product = ({ match }) => {
   const [product, setProduct] = useState({});
   const [star, setStar] = useState(0);
+  const [related, setRelated] = useState([]);
   const { user } = useSelector((state) => ({ ...state }));
 
   const { slug } = match.params;
@@ -28,6 +30,10 @@ const Product = ({ match }) => {
   const loadingSingleProduct = () => {
     getProduct(slug).then((res) => {
       setProduct(res.data);
+      // Load related products
+      getRelated(res.data._id).then((res) => {
+        setRelated(res.data);
+      });
     });
   };
 
@@ -59,6 +65,17 @@ const Product = ({ match }) => {
           <h4>Related products</h4>
           <hr />
         </div>
+      </div>
+      <div className="row pb-5">
+        {related.length ? (
+          related.map((r) => (
+            <div className="col-md-4" key={r._id}>
+              <ProductCard product={r} />
+            </div>
+          ))
+        ) : (
+          <div className="text-center col">No product found</div>
+        )}
       </div>
     </div>
   );

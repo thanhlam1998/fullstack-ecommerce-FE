@@ -18,10 +18,6 @@ const SingleProduct = ({ product, onStarClick, star, handleRate }) => {
     handleRate(_id);
   };
 
-  useEffect(() => {
-    console.log("Star", star);
-  }, [star]);
-
   return (
     <div className="row">
       <div className="col-md-7">
