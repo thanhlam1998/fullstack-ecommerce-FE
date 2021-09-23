@@ -17,3 +17,7 @@ svg {
   height: 450px;
   object-fit: cover;
 }
+
+.ant-card-meta-title {
+  white-space: pre-line;
+}
