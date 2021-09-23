@@ -5,8 +5,9 @@ import {
   UserAddOutlined,
   UserOutlined,
   ShopOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Badge, Menu } from "antd";
 import firebase from "firebase";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +19,7 @@ const { SubMenu, Item } = Menu;
 
 const Header = () => {
   const [current, setCurrent] = useState("");
-  const { user } = useSelector((state) => ({ ...state }));
+  const { user, cart } = useSelector((state) => ({ ...state }));
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -47,6 +48,15 @@ const Header = () => {
       </Item>
       <Item key="shop" icon={<ShopOutlined />}>
         <Link to="/shop">Shop</Link>
+      </Item>
+      <Item
+        key="cart"
+        icon={
+          <Badge count={cart.length} offset={[2, -2]}>
+            <ShoppingCartOutlined />
+          </Badge>
+        }>
+        <Link to="/cart">Cart</Link>
       </Item>
       {user && (
         <SubMenu
