@@ -1,16 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchProductsByFilter, getProductByCount } from "../functions/product";
 import { useDebounce } from "../hooks/useDebounce";
 import ProductCard from "./components/cards/ProductCard";
-import { Menu, Slider } from "antd";
-import { DollarOutlined } from "@ant-design/icons";
+import { Checkbox, Menu, Slider } from "antd";
+import { DollarOutlined, DownSquareOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { actionTypes } from "../actions/types";
-import {
-  useComponentDidMount,
-  useDidMountEffect,
-} from "../hooks/useDidUpdateEffect";
+import { useDidMountEffect } from "../hooks/useDidUpdateEffect";
+import { getCategories } from "../functions/category";
 
 const { SubMenu } = Menu;
 
@@ -18,6 +16,8 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState([0, 0]);
+  const [categories, setCategories] = useState([]);
+  const [categoryIds, setCategoryIds] = useState([]);
 
   const { search } = useSelector((state) => ({ ...state }));
   const { text } = search;
@@ -28,6 +28,9 @@ const Shop = () => {
   // Load products by default on page load
   useEffect(() => {
     loadAllProducts();
+    getCategories().then((res) => {
+      setCategories(res.data);
+    });
   }, []);
 
   const loadAllProducts = () => {
@@ -59,7 +62,41 @@ const Shop = () => {
       type: actionTypes.SEARCH_QUERY,
       payload: { text: "" },
     });
+    setCategoryIds([]);
     setPrice(value);
+  };
+
+  // Show categories as a list of checkboxes
+  const showCategories = () => {
+    return categories.map((c) => (
+      <div key={c._id}>
+        <Checkbox
+          onChange={handleCheck}
+          value={c._id}
+          name="category"
+          checked={categoryIds.includes(c._id)}
+          className="pb-2 ps-4 pe-4">
+          {c.name}
+        </Checkbox>
+        <br />
+      </div>
+    ));
+  };
+
+  // Handle check for categories
+  const handleCheck = (e) => {
+    const inTheState = [...categoryIds];
+    const justChecked = e.target.value;
+    const foundInTheState = inTheState.indexOf(justChecked);
+
+    if (foundInTheState === -1) {
+      inTheState.push(justChecked);
+    } else {
+      inTheState.splice(foundInTheState, 1);
+    }
+
+    setCategoryIds(inTheState);
+    fetchProducts({ category: inTheState });
   };
 
   return (
@@ -68,7 +105,7 @@ const Shop = () => {
         <div className="col-md-3 pt-2">
           <h4>Search/Filter</h4>
           <hr />
-          <Menu defaultOpenKeys={["1"]} mode="inline">
+          <Menu defaultOpenKeys={["1", "2"]} mode="inline">
             <SubMenu
               key="1"
               title={
@@ -86,6 +123,16 @@ const Shop = () => {
                   max={10000}
                 />
               </div>
+            </SubMenu>
+            <SubMenu
+              key="2"
+              title={
+                <span className="h6">
+                  <DownSquareOutlined className="me-2" />
+                  Categories
+                </span>
+              }>
+              <div>{showCategories()}</div>
             </SubMenu>
           </Menu>
         </div>

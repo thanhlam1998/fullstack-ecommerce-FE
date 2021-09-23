@@ -17,7 +17,7 @@ import Search from "../forms/Search";
 const { SubMenu, Item } = Menu;
 
 const Header = () => {
-  const [current, setCurrent] = useState("home");
+  const [current, setCurrent] = useState("");
   const { user } = useSelector((state) => ({ ...state }));
 
   const history = useHistory();
@@ -51,7 +51,7 @@ const Header = () => {
       {user && (
         <SubMenu
           className="float-end"
-          key="SubMenu"
+          key="subMenu"
           icon={<SettingOutlined />}
           title={user.email && user.email.split("@")[0]}>
           {user && user.role === "subscriber" && (
