@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchProductsByFilter, getProductByCount } from "../functions/product";
-import { useDebounce } from "../hooks/useDebounce";
 import ProductCard from "./components/cards/ProductCard";
 import { Checkbox, Menu, Slider } from "antd";
-import { DollarOutlined, DownSquareOutlined } from "@ant-design/icons";
+import {
+  DollarOutlined,
+  DownSquareOutlined,
+  StarOutlined,
+} from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { actionTypes } from "../actions/types";
 import { useDidMountEffect } from "../hooks/useDidUpdateEffect";
 import { getCategories } from "../functions/category";
+import Star from "./components/forms/Star";
 
 const { SubMenu } = Menu;
 
@@ -18,11 +21,11 @@ const Shop = () => {
   const [price, setPrice] = useState([0, 0]);
   const [categories, setCategories] = useState([]);
   const [categoryIds, setCategoryIds] = useState([]);
+  const [star, setStar] = useState("");
 
   const { search } = useSelector((state) => ({ ...state }));
   const { text } = search;
 
-  const textDebounce = useDebounce(text, 800);
   const dispatch = useDispatch();
 
   // Load products by default on page load
@@ -49,24 +52,29 @@ const Shop = () => {
 
   // Load product on user search input
   useDidMountEffect(() => {
-    fetchProducts({ query: textDebounce });
-  }, [textDebounce]);
+    const delayed = setTimeout(() => {
+      fetchProducts({ query: text });
+    }, 300);
+    return () => clearTimeout(delayed);
+  }, [text]);
 
-  // Load products based on price range
-  useDidMountEffect(() => {
-    fetchProducts({ price });
-  }, [price]);
-
-  const sliderAfterChange = (value) => {
-    dispatch({
-      type: actionTypes.SEARCH_QUERY,
-      payload: { text: "" },
-    });
-    setCategoryIds([]);
+  const sliderChange = (value) => {
+    // dispatch({
+    //   type: actionTypes.SEARCH_QUERY,
+    //   payload: { text: "" },
+    // });
+    // setCategoryIds([]);
     setPrice(value);
   };
 
   // Show categories as a list of checkboxes
+  useDidMountEffect(() => {
+    const delayed = setTimeout(() => {
+      fetchProducts({ price });
+    }, 300);
+    return () => clearTimeout(delayed);
+  }, [price]);
+
   const showCategories = () => {
     return categories.map((c) => (
       <div key={c._id}>
@@ -85,6 +93,12 @@ const Shop = () => {
 
   // Handle check for categories
   const handleCheck = (e) => {
+    // dispatch({
+    //   type: actionTypes.SEARCH_QUERY,
+    //   payload: { text: "" },
+    // });
+    // setPrice([0, 0]);
+
     const inTheState = [...categoryIds];
     const justChecked = e.target.value;
     const foundInTheState = inTheState.indexOf(justChecked);
@@ -94,9 +108,36 @@ const Shop = () => {
     } else {
       inTheState.splice(foundInTheState, 1);
     }
-
     setCategoryIds(inTheState);
-    fetchProducts({ category: inTheState });
+  };
+
+  useDidMountEffect(() => {
+    const delayed = setTimeout(() => {
+      fetchProducts({ category: categoryIds });
+    }, 300);
+    return () => clearTimeout(delayed);
+  }, [categoryIds]);
+
+  // Show products by star rating
+  const handleStarClick = (num) => {
+    // dispatch({
+    //   type: actionTypes.SEARCH_QUERY,
+    //   payload: { text: "" },
+    // });
+    // setPrice([0, 0]);
+    // setCategoryIds([]);
+    setStar(num);
+    fetchProducts({ stars: num });
+  };
+
+  const showStars = () => {
+    return (
+      <div className="ps-4 pe-4 pb-2">
+        {[5, 4, 3, 2, 1].map((num) => (
+          <Star key={num} handleClick={handleStarClick} numberOfStars={num} />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -105,7 +146,7 @@ const Shop = () => {
         <div className="col-md-3 pt-2">
           <h4>Search/Filter</h4>
           <hr />
-          <Menu defaultOpenKeys={["1", "2"]} mode="inline">
+          <Menu defaultOpenKeys={["1", "2", "3"]} mode="inline">
             <SubMenu
               key="1"
               title={
@@ -118,8 +159,9 @@ const Shop = () => {
                 <Slider
                   className="ms-4 me-4"
                   tipFormatter={(v) => `$${v}`}
+                  onChange={sliderChange}
                   range
-                  onAfterChange={sliderAfterChange}
+                  value={price}
                   max={10000}
                 />
               </div>
@@ -133,6 +175,16 @@ const Shop = () => {
                 </span>
               }>
               <div>{showCategories()}</div>
+            </SubMenu>
+            <SubMenu
+              key="3"
+              title={
+                <span className="h6">
+                  <StarOutlined className="me-2" />
+                  Rating
+                </span>
+              }>
+              {showStars()}
             </SubMenu>
           </Menu>
         </div>
