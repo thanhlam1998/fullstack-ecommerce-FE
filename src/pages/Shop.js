@@ -2,18 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchProductsByFilter, getProductByCount } from "../functions/product";
 import ProductCard from "./components/cards/ProductCard";
-import { Checkbox, Menu, Slider } from "antd";
+import { Checkbox, Menu, Radio, Slider } from "antd";
 import {
   DollarOutlined,
   DownSquareOutlined,
   StarOutlined,
+  TagsOutlined,
+  AimOutlined,
+  BgColorsOutlined,
+  ThunderboltOutlined,
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { useDidMountEffect } from "../hooks/useDidUpdateEffect";
 import { getCategories } from "../functions/category";
 import Star from "./components/forms/Star";
+import { getSubs } from "../functions/sub";
+import { actionTypes } from "../actions/types";
+import { useDebounce } from "../hooks/useDebounce";
 
 const { SubMenu } = Menu;
+const colors = ["Black", "Brown", "Silver", "White", "Blue"];
+const brands = ["Apple", "Samsung", "Microsoft", "Lenovo", "ASUS"];
+const shippings = ["Yes", "No"];
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -22,9 +32,15 @@ const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [categoryIds, setCategoryIds] = useState([]);
   const [star, setStar] = useState("");
+  const [subs, setSubs] = useState([]);
+  const [brand, setBrand] = useState("");
+  const [color, setColor] = useState("");
+  const [shipping, setShipping] = useState("");
 
   const { search } = useSelector((state) => ({ ...state }));
   const { text } = search;
+
+  const priceDebounce = useDebounce(price, 800);
 
   const dispatch = useDispatch();
 
@@ -33,6 +49,9 @@ const Shop = () => {
     loadAllProducts();
     getCategories().then((res) => {
       setCategories(res.data);
+    });
+    getSubs().then((res) => {
+      setSubs(res.data);
     });
   }, []);
 
@@ -59,21 +78,23 @@ const Shop = () => {
   }, [text]);
 
   const sliderChange = (value) => {
-    // dispatch({
-    //   type: actionTypes.SEARCH_QUERY,
-    //   payload: { text: "" },
-    // });
-    // setCategoryIds([]);
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setCategoryIds([]);
+    setBrand("");
+    setColor("");
+    setShipping("");
     setPrice(value);
   };
 
   // Show categories as a list of checkboxes
   useDidMountEffect(() => {
-    const delayed = setTimeout(() => {
+    if (JSON.stringify(price) !== JSON.stringify([0, 0])) {
       fetchProducts({ price });
-    }, 300);
-    return () => clearTimeout(delayed);
-  }, [price]);
+    }
+  }, [priceDebounce]);
 
   const showCategories = () => {
     return categories.map((c) => (
@@ -93,11 +114,14 @@ const Shop = () => {
 
   // Handle check for categories
   const handleCheck = (e) => {
-    // dispatch({
-    //   type: actionTypes.SEARCH_QUERY,
-    //   payload: { text: "" },
-    // });
-    // setPrice([0, 0]);
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setPrice([0, 0]);
+    setBrand("");
+    setColor("");
+    setShipping("");
 
     const inTheState = [...categoryIds];
     const justChecked = e.target.value;
@@ -112,20 +136,22 @@ const Shop = () => {
   };
 
   useDidMountEffect(() => {
-    const delayed = setTimeout(() => {
+    if (categoryIds.length > 0) {
       fetchProducts({ category: categoryIds });
-    }, 300);
-    return () => clearTimeout(delayed);
-  }, [categoryIds]);
+    }
+  }, [JSON.stringify(categoryIds)]);
 
   // Show products by star rating
   const handleStarClick = (num) => {
-    // dispatch({
-    //   type: actionTypes.SEARCH_QUERY,
-    //   payload: { text: "" },
-    // });
-    // setPrice([0, 0]);
-    // setCategoryIds([]);
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setCategoryIds([]);
+    setBrand("");
+    setColor("");
+    setShipping("");
+
     setStar(num);
     fetchProducts({ stars: num });
   };
@@ -140,13 +166,123 @@ const Shop = () => {
     );
   };
 
+  // Show all sub tags
+  const showSubs = () => {
+    return subs.map((s) => (
+      <div
+        onClick={() => handleSub(s)}
+        key={s._id}
+        className="p-2 m-1 badge bg-info"
+        style={{ cursor: "pointer" }}>
+        {s.name}
+      </div>
+    ));
+  };
+
+  const handleSub = (sub) => {
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setCategoryIds([]);
+    setBrand("");
+    setColor("");
+    setShipping("");
+    fetchProducts({ sub });
+  };
+
+  // Show product base on brand name
+  const handleBrand = (e) => {
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setCategoryIds([]);
+    setColor("");
+    setShipping("");
+
+    setBrand(e.target.value);
+    fetchProducts({ brand: e.target.value });
+  };
+
+  const showBrands = () => {
+    return brands.map((b) => (
+      <div key={b}>
+        <Radio
+          className="pb-1 pt-1"
+          value={b}
+          checked={brand === b}
+          onChange={handleBrand}>
+          {b}
+        </Radio>
+      </div>
+    ));
+  };
+
+  // Show product base on color
+  const handleColor = (e) => {
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setCategoryIds([]);
+    setBrand("");
+    setShipping("");
+
+    setColor(e.target.value);
+    fetchProducts({ color: e.target.value });
+  };
+
+  const showColors = () => {
+    return colors.map((c) => (
+      <div key={c}>
+        <Radio
+          className="pb-1 pt-1"
+          value={c}
+          checked={color === c}
+          onChange={handleColor}>
+          {c}
+        </Radio>
+      </div>
+    ));
+  };
+
+  // Show product base on shipping
+  const handleShipping = (e) => {
+    dispatch({
+      type: actionTypes.SEARCH_QUERY,
+      payload: { text: "" },
+    });
+    setCategoryIds([]);
+    setBrand("");
+    setColor("");
+
+    setShipping(e.target.value);
+    fetchProducts({ shipping: e.target.value });
+  };
+
+  const showShippings = () => {
+    return shippings.map((s) => (
+      <Radio
+        key={s}
+        className="pb-2 pt-2 pe-4"
+        value={s}
+        checked={shipping === s}
+        onChange={handleShipping}>
+        {s}
+      </Radio>
+    ));
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-3 pt-2">
           <h4>Search/Filter</h4>
           <hr />
-          <Menu defaultOpenKeys={["1", "2", "3"]} mode="inline">
+          <Menu
+            defaultOpenKeys={["1", "2", "3", "4", "5", "6", "7"]}
+            mode="inline">
             <SubMenu
               key="1"
               title={
@@ -185,6 +321,52 @@ const Shop = () => {
                 </span>
               }>
               {showStars()}
+            </SubMenu>
+            <SubMenu
+              key="4"
+              title={
+                <span className="h6">
+                  <TagsOutlined className="me-2" />
+                  Sub Categories
+                </span>
+              }>
+              <div className="ps-4 pe-4">{showSubs()}</div>
+            </SubMenu>
+
+            {/* Brands */}
+            <SubMenu
+              key="5"
+              title={
+                <span className="h6">
+                  <AimOutlined className="me-2" />
+                  Brands
+                </span>
+              }>
+              <div className="ps-4 pe-4">{showBrands()}</div>
+            </SubMenu>
+
+            {/* Colors */}
+            <SubMenu
+              key="6"
+              title={
+                <span className="h6">
+                  <BgColorsOutlined className="me-2" />
+                  Colors
+                </span>
+              }>
+              <div className="ps-4 pe-4">{showColors()}</div>
+            </SubMenu>
+
+            {/* Colors */}
+            <SubMenu
+              key="7"
+              title={
+                <span className="h6">
+                  <ThunderboltOutlined className="me-2" />
+                  Shipping
+                </span>
+              }>
+              <div className="ps-4 pe-4">{showShippings()}</div>
             </SubMenu>
           </Menu>
         </div>

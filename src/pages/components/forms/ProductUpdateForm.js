@@ -129,7 +129,7 @@ const ProductUpdateForm = ({
         <select
           name="category"
           className="form-select"
-          value={selectedCategory ? selectedCategory : category._id}
+          value={selectedCategory ? selectedCategory : category?._id}
           onChange={handleCategoryChange}>
           {categories.length > 0 &&
             categories.map((c) => (

@@ -53,7 +53,7 @@ const ProductUpdate = ({ match, history }) => {
       // Load single product
       setValues((prev) => ({ ...prev, ...p.data }));
       // Load single product category subs
-      getCategorySubs(p.data.category._id).then((res) => {
+      getCategorySubs(p.data.category?._id).then((res) => {
         setSubOptions(res.data); // on first load
       });
       // Prepare array of sub ids to show as default sub value in select
