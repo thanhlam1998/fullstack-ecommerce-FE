@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import ProductCardInCheckout from "./components/cards/ProductCardInCheckout";
 
 const Cart = () => {
   const { cart, user } = useSelector((state) => ({ ...state }));
@@ -17,23 +18,55 @@ const Cart = () => {
     //
   };
 
+  const showCartItem = () => {
+    return (
+      <table className="table table-bordered">
+        <colgroup>
+          <col></col>
+          <col></col>
+          <col></col>
+          <col></col>
+          <col></col>
+          <col className="col-1"></col>
+          <col></col>
+          <col></col>
+        </colgroup>
+        <thead className="table-light">
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Brand</th>
+            <th scope="col">Color</th>
+            <th scope="col">Count</th>
+            <th scope="col">Shipping</th>
+            <th scope="col">Remove</th>
+          </tr>
+        </thead>
+        {cart.map((p) => (
+          <ProductCardInCheckout key={p._id} product={p} />
+        ))}
+      </table>
+    );
+  };
+
   return (
     <div className="container-fluid pt-2">
       <div className="row">
         <h4>Cart / {cart.length} Products</h4>
       </div>
       <div className="row">
-        <div className="col-md-8">
+        <div className="col-xxl-8">
           {!cart.length ? (
             <h4>
               No products in cart.
               <Link to="/shop">Continue shopping?</Link>
             </h4>
           ) : (
-            "show cart items"
+            showCartItem()
           )}
         </div>
-        <div className="col-md-4">
+        <div className="col-xxl-4">
           <h4>Order Summary</h4>
           <hr />
           <p>Products</p>

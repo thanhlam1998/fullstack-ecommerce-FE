@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
@@ -33,10 +33,12 @@ import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 
 const App = () => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   // To check firebase auth state
   useEffect(() => {
+    setLoading(true);
     const unsubscibe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
@@ -55,6 +57,9 @@ const App = () => {
             });
           })
           .catch((err) => console.log(err));
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
     });
     // cleanup
@@ -62,6 +67,13 @@ const App = () => {
       unsubscibe();
     };
   }, [dispatch]);
+
+  if (loading)
+    return (
+      <div className="vw-100 vh-100 position-relative">
+        <div className="loader"></div>
+      </div>
+    );
 
   return (
     <>
