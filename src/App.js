@@ -30,6 +30,7 @@ import Product from "./pages/Product";
 import CategoryHome from "./pages/category/CategoryHome";
 import SubHome from "./pages/sub/SubHome";
 import Shop from "./pages/Shop";
+import Cart from "./pages/Cart";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -103,6 +104,9 @@ const App = () => {
 
         {/* Sub Category */}
         <Route exact path="/sub/:slug" component={SubHome} />
+
+        {/* Cart */}
+        <Route exact path="/cart" component={Cart} />
       </Switch>
     </>
   );
