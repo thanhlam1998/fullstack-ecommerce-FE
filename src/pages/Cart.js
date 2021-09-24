@@ -20,33 +20,25 @@ const Cart = () => {
 
   const showCartItem = () => {
     return (
-      <table className="table table-bordered">
-        <colgroup>
-          <col></col>
-          <col></col>
-          <col></col>
-          <col></col>
-          <col></col>
-          <col className="col-1"></col>
-          <col></col>
-          <col></col>
-        </colgroup>
-        <thead className="table-light">
-          <tr>
-            <th scope="col">Image</th>
-            <th scope="col">Title</th>
-            <th scope="col">Price</th>
-            <th scope="col">Brand</th>
-            <th scope="col">Color</th>
-            <th scope="col">Count</th>
-            <th scope="col">Shipping</th>
-            <th scope="col">Remove</th>
-          </tr>
-        </thead>
-        {cart.map((p) => (
-          <ProductCardInCheckout key={p._id} product={p} />
-        ))}
-      </table>
+      <div className="table-responsive">
+        <table className="table table-bordered">
+          <thead className="table-light">
+            <tr>
+              <th>Image</th>
+              <th>Title</th>
+              <th>Price</th>
+              <th>Brand</th>
+              <th>Color</th>
+              <th style={{ width: 100 }}>Count</th>
+              <th>Shipping</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          {cart.map((p) => (
+            <ProductCardInCheckout key={p._id} product={p} />
+          ))}
+        </table>
+      </div>
     );
   };
 

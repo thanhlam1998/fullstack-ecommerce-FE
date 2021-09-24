@@ -25,14 +25,14 @@ svg {
 .loader,
 .loader:before,
 .loader:after {
-  background: #0dc5c1;
+  background: #39c0ed;
   -webkit-animation: load1 1s infinite ease-in-out;
   animation: load1 1s infinite ease-in-out;
   width: 1em;
   height: 4em;
 }
 .loader {
-  color: #0dc5c1;
+  color: #39c0ed;
   position: absolute;
   top: 50%;
   left: 50%;

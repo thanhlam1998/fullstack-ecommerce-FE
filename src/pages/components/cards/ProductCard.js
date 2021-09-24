@@ -41,6 +41,12 @@ const ProductCard = ({ product }) => {
         type: actionTypes.ADD_TO_CART,
         payload: unique,
       });
+
+      // Show cart items inside drawer
+      dispatch({
+        type: actionTypes.SET_VISIBLE,
+        payload: true,
+      });
     }
   };
 
