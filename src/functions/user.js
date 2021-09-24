@@ -31,3 +31,15 @@ export const emptyUserCart = async (authtoken) => {
     }
   );
 };
+
+export const saveUserAddress = async (address, authtoken) => {
+  return axios.post(
+    `${process.env.REACT_APP_API}/user/address`,
+    { address },
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};

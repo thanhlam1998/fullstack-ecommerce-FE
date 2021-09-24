@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import "react-quill/dist/quill.snow.css";
 import { actionTypes } from "./actions/types";
 import { auth } from "./firebase";
 import { currentUser } from "./functions/auth";
