@@ -32,6 +32,7 @@ import SubHome from "./pages/sub/SubHome";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import SideDrawer from "./pages/components/drawer/SideDrawer";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -121,6 +122,9 @@ const App = () => {
 
         {/* Cart */}
         <Route exact path="/cart" component={Cart} />
+
+        {/* Checkout */}
+        <UserRoute exact path="/checkout" component={Checkout} />
       </Switch>
     </>
   );
