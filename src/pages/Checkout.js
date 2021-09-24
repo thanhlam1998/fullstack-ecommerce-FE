@@ -13,6 +13,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [addressSaved, setAddressSaved] = useState(false);
   const [address, setAddress] = useState("");
+  const [coupon, setCoupon] = useState("");
 
   const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
@@ -57,20 +58,67 @@ const Checkout = () => {
     });
   };
 
+  const showAddress = () => {
+    return (
+      <>
+        <ReactQuill theme="snow" value={address} onChange={setAddress} />
+        <button className="btn btn-primary mt-2" onClick={saveAddressToDb}>
+          Save
+        </button>
+      </>
+    );
+  };
+
+  const showProductSummary = () => {
+    return loading ? (
+      <Skeleton active />
+    ) : (
+      products.map((p, i) => (
+        <div key={i}>
+          <p>
+            {p.product.title} ({p.color}) x {p.count} = ${p.price * p.count}
+          </p>
+        </div>
+      ))
+    );
+  };
+
+  const applyDiscountCoupon = () => {
+    console.log("send coupon to backend", coupon);
+  };
+
+  const onCouponChange = (e) => {
+    setCoupon(e.target.value);
+  };
+
+  const showApplyCoupon = () => {
+    return (
+      <>
+        <input
+          type="text"
+          onChange={onCouponChange}
+          value={coupon}
+          className="form-control"
+          placeholder="Enter your coupon"
+        />
+        <button onClick={applyDiscountCoupon} className="btn btn-light mt-2">
+          Apply
+        </button>
+      </>
+    );
+  };
+
   return (
     <div className="row">
       <div className="col-md-6">
         <h4>Delivery address</h4>
         <br />
         <br />
-        <ReactQuill theme="snow" value={address} onChange={setAddress} />
-        <button className="btn btn-primary mt-2" onClick={saveAddressToDb}>
-          Save
-        </button>
+        {showAddress()}
         <hr />
         <h4>Got Coupon?</h4>
         <br />
-        coupon input and apply button
+        {showApplyCoupon()}
       </div>
 
       <div className="col-md-6">
@@ -81,17 +129,7 @@ const Checkout = () => {
           {loading ? <Skeleton.Button size="small" active /> : products.length}
         </div>
         <hr />
-        {loading ? (
-          <Skeleton active />
-        ) : (
-          products.map((p, i) => (
-            <div key={i}>
-              <p>
-                {p.product.title} ({p.color}) x {p.count} = ${p.price * p.count}
-              </p>
-            </div>
-          ))
-        )}
+        {showProductSummary()}
         <hr />
         <p>
           Cart Total: <b>${total}</b>

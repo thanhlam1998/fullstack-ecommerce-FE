@@ -133,10 +133,7 @@ const ProductCardInCheckout = ({ product }) => {
           )}
         </td>
         <td className="text-center">
-          <CloseCircleFilled
-            onClick={handleRemove}
-            className="text-danger pointer"
-          />
+          <CloseCircleFilled onClick={handleRemove} className="text-danger " />
         </td>
       </tr>
     </tbody>

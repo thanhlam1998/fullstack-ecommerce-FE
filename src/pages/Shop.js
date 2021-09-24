@@ -41,6 +41,7 @@ const Shop = () => {
   const { text } = search;
 
   const priceDebounce = useDebounce(price, 800);
+  const textDebounce = useDebounce(text, 500);
 
   const dispatch = useDispatch();
 
@@ -71,11 +72,10 @@ const Shop = () => {
 
   // Load product on user search input
   useDidMountEffect(() => {
-    const delayed = setTimeout(() => {
+    if (text) {
       fetchProducts({ query: text });
-    }, 300);
-    return () => clearTimeout(delayed);
-  }, [text]);
+    }
+  }, [textDebounce]);
 
   const sliderChange = (value) => {
     dispatch({

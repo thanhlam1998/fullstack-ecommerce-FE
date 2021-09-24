@@ -1,19 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminNav from "../../components/nav/AdminNav";
 import DatePicker from "react-datepicker";
-import { createCoupon } from "../../../functions/coupon";
+import {
+  createCoupon,
+  getCoupons,
+  removeCoupon,
+} from "../../../functions/coupon";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Popconfirm } from "antd";
 
 const CreateCoupon = () => {
   const [name, setName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [discount, setDiscount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [coupons, setCoupons] = useState([]);
 
   // redux
   const { user } = useSelector((state) => ({ ...state }));
 
+  useEffect(() => {
+    getAllCoupons();
+  }, []);
+
+  const getAllCoupons = () => {
+    getCoupons().then((res) => {
+      setCoupons(res.data);
+    });
+  };
+
+  // Create coupon
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -24,10 +42,25 @@ const CreateCoupon = () => {
         setDiscount("");
         setExpiry("");
         toast.success(`${res.data.name} is created`);
+        getAllCoupons();
       })
       .catch((err) => {
-        console.log(err);
-        // toast.error(err)
+        setLoading(false);
+        toast.error(err.response.data);
+      });
+  };
+  // Remove coupon
+  const handleRemove = (couponId) => {
+    setLoading(true);
+    removeCoupon(couponId, user.token)
+      .then((res) => {
+        setLoading(false);
+        toast.error(`${res.data.name} deleted`);
+        getAllCoupons();
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err.response.data);
       });
   };
 
@@ -50,7 +83,11 @@ const CreateCoupon = () => {
           <AdminNav />
         </div>
         <div className="col-md-10">
-          <h4>Coupon</h4>
+          {loading ? (
+            <h4 className="text-danger">Loading...</h4>
+          ) : (
+            <h4>Coupon</h4>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
@@ -89,6 +126,38 @@ const CreateCoupon = () => {
 
             <button className="btn btn-outline-primary">Save</button>
           </form>
+
+          <br />
+
+          <h4>{coupons.length} Coupons</h4>
+
+          <table className="table table-bordered">
+            <thead className="table-light">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Expiry</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {coupons.map((c) => (
+                <tr key={c._id}>
+                  <td>{c.name}</td>
+                  <td>{new Date(c.expiry).toLocaleDateString("vi-VI")}</td>
+                  <td>{c.discount}</td>
+                  <td>
+                    <Popconfirm
+                      title="Delete?"
+                      onConfirm={() => handleRemove(c._id)}>
+                      <DeleteOutlined className="text-danger" />
+                    </Popconfirm>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
