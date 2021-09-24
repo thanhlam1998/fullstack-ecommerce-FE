@@ -1,39 +1,41 @@
 import { useEffect, useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-quill/dist/quill.snow.css";
 import { useDispatch } from "react-redux";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import "react-quill/dist/quill.snow.css";
 import { actionTypes } from "./actions/types";
 import { auth } from "./firebase";
 import { currentUser } from "./functions/auth";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import CategoryCreate from "./pages/admin/category/CategoryCreate";
+import CategoryUpdate from "./pages/admin/category/CategoryUpdate";
+import CreateCoupon from "./pages/admin/coupon/CreateCoupon";
+import AllProducts from "./pages/admin/product/AllProducts";
+import ProductCreate from "./pages/admin/product/ProductCreate";
+import ProductUpdate from "./pages/admin/product/ProductUpdate";
+import SubCreate from "./pages/admin/sub/SubCreate";
+import SubUpdate from "./pages/admin/sub/SubUpdate";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import RegisterComplete from "./pages/auth/RegisterComplete";
+import Cart from "./pages/Cart";
+import CategoryHome from "./pages/category/CategoryHome";
+import Checkout from "./pages/Checkout";
+import SideDrawer from "./pages/components/drawer/SideDrawer";
 import Header from "./pages/components/nav/Header";
+import AdminRoute from "./pages/components/routes/AdminRoute";
 import UserRoute from "./pages/components/routes/UserRoute";
 import Home from "./pages/Home";
+import Product from "./pages/Product";
+import Shop from "./pages/Shop";
+import SubHome from "./pages/sub/SubHome";
 import History from "./pages/user/History";
 import Password from "./pages/user/Password";
 import Wishlist from "./pages/user/Wishlist";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminRoute from "./pages/components/routes/AdminRoute";
-import CategoryCreate from "./pages/admin/category/CategoryCreate";
-import CategoryUpdate from "./pages/admin/category/CategoryUpdate";
-import SubCreate from "./pages/admin/sub/SubCreate";
-import SubUpdate from "./pages/admin/sub/SubUpdate";
-import ProductCreate from "./pages/admin/product/ProductCreate";
-import AllProducts from "./pages/admin/product/AllProducts";
-import ProductUpdate from "./pages/admin/product/ProductUpdate";
-import Product from "./pages/Product";
-import CategoryHome from "./pages/category/CategoryHome";
-import SubHome from "./pages/sub/SubHome";
-import Shop from "./pages/Shop";
-import Cart from "./pages/Cart";
-import SideDrawer from "./pages/components/drawer/SideDrawer";
-import Checkout from "./pages/Checkout";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -114,6 +116,7 @@ const App = () => {
           component={ProductUpdate}
         />
         <AdminRoute exact path="/admin/products" component={AllProducts} />
+        <AdminRoute exact path="/admin/coupon" component={CreateCoupon} />
 
         {/* Category */}
         <Route exact path="/category/:slug" component={CategoryHome} />
