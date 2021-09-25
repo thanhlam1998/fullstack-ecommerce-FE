@@ -43,3 +43,15 @@ export const saveUserAddress = async (address, authtoken) => {
     }
   );
 };
+
+export const applyCoupon = async (coupon, authtoken) => {
+  return axios.post(
+    `${process.env.REACT_APP_API}/user/cart/coupon`,
+    { coupon },
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
