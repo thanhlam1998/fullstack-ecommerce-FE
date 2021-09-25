@@ -27,39 +27,40 @@ const SideDrawer = () => {
   return (
     <Drawer
       className="text-center"
-      title={`Cart / ${cart.length} Products`}
+      title={`Cart / ${cart && cart.length} Products`}
       placement="right"
       onClose={handleClose}
       width={300}
       visible={drawer}>
-      {cart.map((p) => (
-        <div key={p._id} className="row">
-          <div className="col">
-            <Card
-              className="mb-3"
-              bodyStyle={{
-                padding: "1em",
-                backgroundColor: "#4D4D4D",
-              }}
-              cover={
-                <img
-                  src={p.images[0] ? p.images[0].url : laptop}
-                  alt="product_image"
-                  style={imageStyle}
-                  className="p-1"
+      {cart &&
+        cart.map((p) => (
+          <div key={p._id} className="row">
+            <div className="col">
+              <Card
+                className="mb-3"
+                bodyStyle={{
+                  padding: "1em",
+                  backgroundColor: "#4D4D4D",
+                }}
+                cover={
+                  <img
+                    src={p.images[0] ? p.images[0].url : laptop}
+                    alt="product_image"
+                    style={imageStyle}
+                    className="p-1"
+                  />
+                }>
+                <Meta
+                  title={
+                    <div className="text-white">
+                      {p.title} x {p.count}
+                    </div>
+                  }
                 />
-              }>
-              <Meta
-                title={
-                  <div className="text-white">
-                    {p.title} x {p.count}
-                  </div>
-                }
-              />
-            </Card>
+              </Card>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
 
       <Link to="/cart">
         <button

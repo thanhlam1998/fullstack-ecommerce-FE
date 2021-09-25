@@ -4,6 +4,7 @@ import { isEqual, uniqWith } from "lodash";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { actionTypes } from "../../../actions/types";
 import { showAverage } from "../../../functions/rating";
 import laptop from "../../../images/laptop.png";
@@ -12,7 +13,6 @@ const { Meta } = Card;
 
 const ProductCard = ({ product }) => {
   const [tooltip, setTooltip] = useState("Click to add");
-
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
@@ -42,11 +42,13 @@ const ProductCard = ({ product }) => {
         payload: unique,
       });
 
+      toast.success("Added to cart");
+
       // Show cart items inside drawer
-      dispatch({
-        type: actionTypes.SET_VISIBLE,
-        payload: true,
-      });
+      // dispatch({
+      //   type: actionTypes.SET_VISIBLE,
+      //   payload: true,
+      // });
     }
   };
 
@@ -60,32 +62,33 @@ const ProductCard = ({ product }) => {
       ) : (
         <div className="text-center pt-1 pb-3">No rating yet</div>
       )}
-      <Card
-        className="m-2"
-        cover={
-          <img
-            alt={title}
-            src={images && images.length ? images[0].url : laptop}
-            style={{ height: "150px", objectFit: "cover" }}
-            className="p-1"
+      <div className="m-2">
+        <Card
+          cover={
+            <img
+              alt={title}
+              src={images && images.length ? images[0].url : laptop}
+              style={{ height: "150px", objectFit: "cover" }}
+              className="p-1"
+            />
+          }
+          actions={[
+            <Link to={`/product/${slug}`}>
+              <EyeOutlined className="text-info" /> <br /> View Product
+            </Link>,
+            <Tooltip title={tooltip}>
+              <div onClick={handleAddToCart}>
+                <ShoppingCartOutlined className="text-success" />
+                <br /> Add to Cart
+              </div>
+            </Tooltip>,
+          ]}>
+          <Meta
+            title={`${title} - $${price}`}
+            description={`${description && description.substring(0, 40)}...`}
           />
-        }
-        actions={[
-          <Link to={`/product/${slug}`}>
-            <EyeOutlined className="text-info" /> <br /> View Product
-          </Link>,
-          <Tooltip title={tooltip}>
-            <div onClick={handleAddToCart}>
-              <ShoppingCartOutlined className="text-success" />
-              <br /> Add to Cart
-            </div>
-          </Tooltip>,
-        ]}>
-        <Meta
-          title={`${title} - $${price}`}
-          description={`${description && description.substring(0, 40)}...`}
-        />
-      </Card>
+        </Card>
+      </div>
     </>
   );
 };

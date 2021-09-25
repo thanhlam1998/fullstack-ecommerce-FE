@@ -26,6 +26,7 @@ import Cart from "./pages/Cart";
 import CategoryHome from "./pages/category/CategoryHome";
 import Checkout from "./pages/Checkout";
 import SideDrawer from "./pages/components/drawer/SideDrawer";
+import FloatingButton from "./pages/components/FloatingButton/FloatingButton";
 import Header from "./pages/components/nav/Header";
 import AdminRoute from "./pages/components/routes/AdminRoute";
 import UserRoute from "./pages/components/routes/UserRoute";
@@ -85,6 +86,7 @@ const App = () => {
     <>
       <Header />
       <SideDrawer />
+      <FloatingButton />
       <ToastContainer />
       <Switch>
         <Route exact path="/" component={Home} />
