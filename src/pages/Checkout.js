@@ -12,7 +12,7 @@ import {
 } from "../functions/user";
 import ReactQuill from "react-quill";
 
-const Checkout = () => {
+const Checkout = ({ history }) => {
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -101,17 +101,30 @@ const Checkout = () => {
         if (res.data) {
           setTotalAfterDiscount(res.data.totalAfterDiscount);
           // update redux coupon applies
+          dispatch({
+            type: actionTypes.COUPON_APPLIED,
+            payload: true,
+          });
         }
       })
       .catch((err) => {
         setDiscountError(err.response.data);
+        setTotalAfterDiscount(0);
         // update redux coupon applies
+        dispatch({
+          type: actionTypes.COUPON_APPLIED,
+          payload: false,
+        });
       });
   };
 
   const onCouponChange = (e) => {
     setCoupon(e.target.value);
     setDiscountError("");
+  };
+
+  const handlePlaceOrder = () => {
+    history.push("/payment");
   };
 
   const showApplyCoupon = () => {
@@ -167,6 +180,7 @@ const Checkout = () => {
         <div className="row">
           <div className="col-md-6">
             <button
+              onClick={handlePlaceOrder}
               disabled={!addressSaved || !products.length}
               className="btn btn-primary">
               Place Order

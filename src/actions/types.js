@@ -3,6 +3,7 @@ const LOGOUT = "LOGOUT";
 const SEARCH_QUERY = "SEARCH_QUERY";
 const ADD_TO_CART = "ADD_TO_CART";
 const SET_VISIBLE = "SET_VISIBLE";
+const COUPON_APPLIED = "COUPON_APPLIED";
 
 export const actionTypes = {
   LOGGED_IN_USER,
@@ -10,4 +11,5 @@ export const actionTypes = {
   SEARCH_QUERY,
   ADD_TO_CART,
   SET_VISIBLE,
+  COUPON_APPLIED,
 };

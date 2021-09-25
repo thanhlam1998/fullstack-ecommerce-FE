@@ -30,6 +30,7 @@ import Header from "./pages/components/nav/Header";
 import AdminRoute from "./pages/components/routes/AdminRoute";
 import UserRoute from "./pages/components/routes/UserRoute";
 import Home from "./pages/Home";
+import Payment from "./pages/Payment";
 import Product from "./pages/Product";
 import Shop from "./pages/Shop";
 import SubHome from "./pages/sub/SubHome";
@@ -129,6 +130,7 @@ const App = () => {
 
         {/* Checkout */}
         <UserRoute exact path="/checkout" component={Checkout} />
+        <UserRoute exact path="/payment" component={Payment} />
       </Switch>
     </>
   );
