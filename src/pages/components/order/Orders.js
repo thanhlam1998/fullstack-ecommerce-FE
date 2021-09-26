@@ -1,7 +1,7 @@
 import React from "react";
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import ShowPaymentInfo from "../cards/ShowPaymentInfo";
 import { ORDER_STATUS } from "../../../config/constant";
+import { showOrderInTable } from "../../user/History";
 
 const Orders = ({ orders, handleStatusChange }) => {
   return (
@@ -33,6 +33,8 @@ const Orders = ({ orders, handleStatusChange }) => {
               </div>
             </div>
           </div>
+
+          {showOrderInTable(order)}
         </div>
       ))}
     </>

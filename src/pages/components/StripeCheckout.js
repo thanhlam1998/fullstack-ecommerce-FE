@@ -156,13 +156,17 @@ const StripeCheckout = () => {
             {error}
           </div>
         )}
-        <p
+        <div
           className={
             succeeded ? "result-message text-success" : "result-message hidden"
           }>
-          Payment Successful.
-        </p>
-        <Link to="/user/history">Click to see your purchase history.</Link>
+          <p className="fw-bold fs-5">Payment Successful.</p>
+          <Link
+            className="text-dark fw-normal text-decoration-underline"
+            to="/user/history">
+            Click to see your purchase history.
+          </Link>
+        </div>
       </form>
     </>
   );
