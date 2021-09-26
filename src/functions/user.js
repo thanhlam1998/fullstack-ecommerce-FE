@@ -75,3 +75,49 @@ export const getUserOrders = async (authtoken) => {
     },
   });
 };
+
+export const getWishList = async (authtoken) => {
+  return axios.get(`${process.env.REACT_APP_API}/user/wishlist`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
+
+export const removeWishList = async (productId, authtoken) => {
+  return axios.put(
+    `${process.env.REACT_APP_API}/user/wishlist/${productId}`,
+    {},
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+
+export const addToWishList = async (productId, authtoken) => {
+  return axios.post(
+    `${process.env.REACT_APP_API}/user/wishlist`,
+    {
+      productId,
+    },
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+
+export const createCashOrderForUser = async (coupon, authtoken) => {
+  return axios.post(
+    `${process.env.REACT_APP_API}/user/cash/order`,
+    { couponApplied: coupon },
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};

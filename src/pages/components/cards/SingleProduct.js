@@ -2,12 +2,14 @@ import { HeartOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Card, Tabs, Tooltip } from "antd";
 import { isEqual, uniqWith } from "lodash";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Carousel } from "react-responsive-carousel";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 import StarRatings from "react-star-ratings";
+import { toast } from "react-toastify";
 import { actionTypes } from "../../../actions/types";
 import { showAverage } from "../../../functions/rating";
+import { addToWishList } from "../../../functions/user";
 import laptop from "../../../images/laptop.png";
 import RatingModal from "../modal/RatingModal";
 import ProductListItem from "./ProductListItem";
@@ -19,7 +21,12 @@ const SingleProduct = ({ product, onStarClick, star, handleRate }) => {
 
   const { title, images, description, _id } = product;
 
+  const { user } = useSelector((state) => ({ ...state }));
+
   const dispatch = useDispatch();
+
+  // router
+  const history = useHistory();
 
   const handleAddToCart = () => {
     // create cart array
@@ -58,6 +65,14 @@ const SingleProduct = ({ product, onStarClick, star, handleRate }) => {
 
   const handleRateWrapper = () => {
     handleRate(_id);
+  };
+
+  const handleAddToWishList = () => {
+    addToWishList(_id, user.token).then((res) => {
+      console.log("ADDED TO WISHLIST", res.data);
+      toast.success("ADDED TO WISHLIST");
+      history.push("/user/wishlist");
+    });
   };
 
   return (
@@ -100,9 +115,9 @@ const SingleProduct = ({ product, onStarClick, star, handleRate }) => {
                 <br /> Add to Cart
               </div>
             </Tooltip>,
-            <Link to="/">
+            <div onClick={handleAddToWishList}>
               <HeartOutlined className="text-danger" /> <br /> Add to Wishlist
-            </Link>,
+            </div>,
             <RatingModal handleRate={handleRateWrapper}>
               <StarRatings
                 name={_id}

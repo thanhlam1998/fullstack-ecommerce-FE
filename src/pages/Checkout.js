@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { actionTypes } from "../actions/types";
 import {
   applyCoupon,
+  createCashOrderForUser,
   emptyUserCart,
   getUserCart,
   saveUserAddress,
@@ -24,7 +25,8 @@ const Checkout = ({ history }) => {
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0);
   const [discountError, setDiscountError] = useState("");
 
-  const { user } = useSelector((state) => ({ ...state }));
+  const { user, COD } = useSelector((state) => ({ ...state }));
+  const couponTrueOrFalse = useSelector((state) => state.coupon);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -124,7 +126,35 @@ const Checkout = ({ history }) => {
   };
 
   const handlePlaceOrder = () => {
-    history.push("/payment");
+    if (COD) {
+      createCashOrderForUser(couponTrueOrFalse, user.token).then((res) => {
+        console.log("USER CASH ORDER CREATED RES", res);
+        // empty cart form redux, local storage, reset coupon, reset COD, redirect
+        if (res.data.ok) {
+          // empty cart from local storage
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("cart");
+          }
+          // empty cart from redux
+          dispatch({
+            type: actionTypes.ADD_TO_CART,
+            payload: [],
+          });
+          // empty COD redux
+          dispatch({
+            type: actionTypes.COD,
+            payload: false,
+          });
+          // empty cart from database
+          emptyUserCart(user.token);
+          setTimeout(() => {
+            history.push("/user/history");
+          }, 1000);
+        }
+      });
+    } else {
+      history.push("/payment");
+    }
   };
 
   const showApplyCoupon = () => {
